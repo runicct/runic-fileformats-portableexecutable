@@ -23,6 +23,7 @@
 */
 
 using System;
+using System.IO;
 
 namespace Runic.FileFormats
 {
@@ -55,6 +56,7 @@ namespace Runic.FileFormats
                 uint coffHeaderAddress = stream.ReadUInt32();
                 stream.BaseStream.Seek(coffHeaderAddress - 0x40, SeekOrigin.Current);
             }
+#if NET6_0_OR_GREATER
             public static void ReadDOSHeader(Span<byte> data, ref uint offset)
             {
                 ushort magic = BitConverterLE.ToUInt16(data, offset); offset += 2; // First 2 Bytes are 'MZ'
@@ -63,6 +65,7 @@ namespace Runic.FileFormats
                 uint coffHeaderAddress = BitConverterLE.ToUInt32(data, offset); offset += 4;
                 offset += coffHeaderAddress - 0x40;
             }
+#endif
         }
     }
 }

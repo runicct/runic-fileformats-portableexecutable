@@ -129,7 +129,12 @@ namespace Runic.FileFormats
                     binaryWriter.Write((ulong)0); // Reserved
                     binaryWriter.Write((ulong)0); // Reserved
                 }
+#if NET6_0_OR_GREATER
                 public static CLIHeader? Load(byte[] data, uint offset)
+#else
+                public static CLIHeader Load(byte[] data, uint offset)
+#endif
+
                 {
                     if (data.Length < offset + 72) { return null; }
                     offset += 4; // Skip Header Size
@@ -171,7 +176,11 @@ namespace Runic.FileFormats
                     return new CLIHeader(new Version(majorRuntimeVersion, minorRuntimeVersion), metadataRootRVA, metadataSize, flags, entrypoint, resourcesRVA, resourcesSize, strongNameSignatureRVA, strongNameSignatureSize, VTableFixupsRVA, VTableFixupsSize);
                 }
 #endif
+#if NET6_0_OR_GREATER
                 public static CLIHeader? Load(PortableExecutable portableExecutable)
+#else
+                public static CLIHeader Load(PortableExecutable portableExecutable)
+#endif
                 {
                     if (portableExecutable.CLIHeader.RelativeVirtualAddress == 0) { return null; }
 
@@ -179,7 +188,7 @@ namespace Runic.FileFormats
                     Span<byte> header = portableExecutable.GetSpanAtRelativeVirtualAddress(portableExecutable.CLIHeader.RelativeVirtualAddress, 72);
                     if (header.IsEmpty || header.Length < 72) { return null; }
 #else
-                    byte[]? header = portableExecutable.ReadArrayAtRelativeVirtualAddress(portableExecutable.CLIHeader.RelativeVirtualAddress, 72);
+                    byte[] header = portableExecutable.ReadArrayAtRelativeVirtualAddress(portableExecutable.CLIHeader.RelativeVirtualAddress, 72);
                     if (header == null || header.Length < 72) { return null; }
 #endif
 

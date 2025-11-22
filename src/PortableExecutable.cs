@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Runic.FileFormats
 {
@@ -108,7 +109,11 @@ namespace Runic.FileFormats
         {
             for (int n = 0; n < _sections.Length; n++)
             {
+#if NET6_0_OR_GREATER
                 ImportedSection? importedSection = _sections[n] as ImportedSection;
+#else
+                ImportedSection importedSection = _sections[n] as ImportedSection;
+#endif
                 if (importedSection != null && importedSection.SizeOnDisk > 0)
                 {
                     stream.BaseStream.Seek(importedSection.AddressOnDisk, SeekOrigin.Begin);
@@ -218,7 +223,11 @@ namespace Runic.FileFormats
             for (uint n = 0; n < padding; n++) { stream.Write((byte)0); }
             for (int n = 0; n < _sections.Length; n++)
             {
+#if NET6_0_OR_GREATER
                 byte[]? data = _sections[n].GetData();
+#else
+                byte[] data = _sections[n].GetData();
+#endif
                 if (data != null)
                 {
                     uint paddedSectionSize = (uint)data.LongLength;
@@ -245,7 +254,11 @@ namespace Runic.FileFormats
         /// </summary>
         /// <param name="rva">The RVA to be located</param>
         /// <returns>The section that contains the RVA or null if the RVA does not fall in any section</returns>
+#if NET6_0_OR_GREATER
         public Section? FindSectionFromRelativeVirtualAddress(uint relativeVirtualAddress)
+#else
+        public Section FindSectionFromRelativeVirtualAddress(uint relativeVirtualAddress)
+#endif
         {
             for (int n = 0; n < _sections.Length; n++)
             {
@@ -273,12 +286,24 @@ namespace Runic.FileFormats
             return new Span<byte>(sectionData, (int)offset, (int)length);
         }
 #endif
+#if NET6_0_OR_GREATER
         public byte[]? ReadArrayAtRelativeVirtualAddress(uint relativeVirtualAddress, uint length)
+#else
+        public byte[] ReadArrayAtRelativeVirtualAddress(uint relativeVirtualAddress, uint length)
+#endif
         {
+#if NET6_0_OR_GREATER
             Section? section = FindSectionFromRelativeVirtualAddress(relativeVirtualAddress);
+#else
+            Section section = FindSectionFromRelativeVirtualAddress(relativeVirtualAddress);
+#endif
             if (section == null) { return null; }
             uint offset = relativeVirtualAddress - section.RelativeVirtualAddress;
+#if NET6_0_OR_GREATER
             byte[]? sectionData = section.GetData();
+#else
+            byte[] sectionData = section.GetData();
+#endif
             if (sectionData == null) { return null; }
             uint end = (uint)(offset + length);
             if (end >= sectionData.Length) { end = (uint)(sectionData.Length - 1); }
@@ -290,12 +315,24 @@ namespace Runic.FileFormats
             }
             return data;
         }
+#if NET6_0_OR_GREATER
         public string? ReadUTF8StringAtRelativeVirtualAddress(uint rva)
+#else
+        public string ReadUTF8StringAtRelativeVirtualAddress(uint rva)
+#endif
         {
+#if NET6_0_OR_GREATER
             Section? section = FindSectionFromRelativeVirtualAddress(rva);
+#else
+            Section section = FindSectionFromRelativeVirtualAddress(rva);
+#endif
             if (section == null) { return null; }
             uint offset = rva - section.RelativeVirtualAddress;
+#if NET6_0_OR_GREATER
             byte[]? sectionData = section.GetData();
+#else
+            byte[] sectionData = section.GetData();
+#endif
             if (sectionData == null) { return null; }
             for (uint n = offset; n < sectionData.Length; n++)
             {
@@ -308,9 +345,17 @@ namespace Runic.FileFormats
         }
         public ushort ReadUInt16AtRelativeVirtualAddress(uint rva)
         {
+#if NET6_0_OR_GREATER
             Section? section = FindSectionFromRelativeVirtualAddress(rva);
+#else
+            Section section = FindSectionFromRelativeVirtualAddress(rva);
+#endif
             if (section == null) { return 0; }
+#if NET6_0_OR_GREATER
             byte[]? sectionData = section.GetData();
+#else
+            byte[] sectionData = section.GetData();
+#endif
             if (sectionData == null) { return 0; }
             uint offset = rva - section.RelativeVirtualAddress;
             if (offset + 2 >= sectionData.Length) { return 0; }
@@ -318,9 +363,17 @@ namespace Runic.FileFormats
         }
         public uint ReadUInt32AtRelativeVirtualAddress(uint rva)
         {
+#if NET6_0_OR_GREATER
             Section? section = FindSectionFromRelativeVirtualAddress(rva);
+#else
+            Section section = FindSectionFromRelativeVirtualAddress(rva);
+#endif
             if (section == null) { return 0; }
+#if NET6_0_OR_GREATER
             byte[]? sectionData = section.GetData();
+#else
+            byte[] sectionData = section.GetData();
+#endif
             if (sectionData == null) { return 0; }
             uint offset = rva - section.RelativeVirtualAddress;
             if (offset + 4 >= sectionData.Length) { return 0; }
@@ -328,9 +381,17 @@ namespace Runic.FileFormats
         }
         public ulong ReadUInt64AtRelativeVirtualAddress(uint rva)
         {
+#if NET6_0_OR_GREATER
             Section? section = FindSectionFromRelativeVirtualAddress(rva);
+#else
+            Section section = FindSectionFromRelativeVirtualAddress(rva);
+#endif
             if (section == null) { return 0; }
+#if NET6_0_OR_GREATER
             byte[]? sectionData = section.GetData();
+#else
+            byte[] sectionData = section.GetData();
+#endif
             if (sectionData == null) { return 0; }
             uint offset = rva - section.RelativeVirtualAddress;
             if (offset + 8 >= sectionData.Length) { return 0; }

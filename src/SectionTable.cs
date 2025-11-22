@@ -38,7 +38,11 @@ namespace Runic.FileFormats
         public Section[] Sections { get { return _sections; } set { _sections = value; } }
         class ImportedSection : Section
         {
+#if NET6_0_OR_GREATER
             byte[]? _data;
+#else
+            byte[] _data;
+#endif
             internal void SetData(byte[] data)
             {
                 _data = data;
@@ -58,7 +62,11 @@ namespace Runic.FileFormats
                 return new Span<byte>(_data);
             }
 #endif
+#if NET6_0_OR_GREATER
             public override byte[]? GetData()
+#else
+            public override byte[] GetData()
+#endif
             {
                 return _data;
             }
@@ -137,7 +145,11 @@ namespace Runic.FileFormats
                 stream.Write((uint)allignedSize);
                 stream.Write((uint)_sections[n].RelativeVirtualAddress);
 
+#if NET6_0_OR_GREATER
                 byte[]? data = _sections[n].GetData();
+#else
+                byte[] data = _sections[n].GetData();
+#endif
                 if (data != null)
                 {
                     uint sectionSizeOnDisk = (uint)data.LongLength;

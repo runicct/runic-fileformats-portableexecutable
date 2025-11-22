@@ -36,9 +36,11 @@ namespace Runic.FileFormats
             public virtual uint Size { get { return _size; } set { _size = value; } }
             uint _relativeVirtualAddress;
             public virtual uint RelativeVirtualAddress { get { return _relativeVirtualAddress; } set { _relativeVirtualAddress = value; } }
-            public virtual byte[]? GetData() { return null; }
 #if NET6_0_OR_GREATER
+            public virtual byte[]? GetData() { return null; }
             public virtual Span<byte> GetDataSpan() { return Span<byte>.Empty; }
+#else
+            public virtual byte[] GetData() { return null; }
 #endif
             Flag _characteristic = Flag.None;
             public virtual Flag Characteristics { get { return _characteristic; } set { _characteristic = value; } }

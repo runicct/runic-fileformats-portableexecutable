@@ -161,6 +161,7 @@ namespace Runic.FileFormats
                 }
             }
         }
+#if NET6_0_OR_GREATER
         void DecodeDirectories(Span<byte> data, ref uint offset)
         {
             uint numberOfRvaAndSize = BitConverterLE.ToUInt32(data, offset); offset += 4;
@@ -266,6 +267,7 @@ namespace Runic.FileFormats
                 }
             }
         }
+#endif
         void EncodeDirectories(System.IO.BinaryWriter writer)
         {
             writer.Write((int)16); // Number of RVA and Sizes

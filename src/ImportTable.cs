@@ -57,9 +57,19 @@ namespace Runic.FileFormats
                     {
                         ushort _hint;
                         public ushort Hint { get { return _hint; } }
+#if NET6_0_OR_GREATER
                         string? _name;
                         public string? Name { get { return _name; } }
+#else
+                        string _name;
+                        public string Name { get { return _name; } }
+#endif
+
+#if NET6_0_OR_GREATER
                         public SymbolByName(ushort hint, string? name)
+#else
+                        public SymbolByName(ushort hint, string name)
+#endif
                         {
                             _hint = hint;
                             _name = name;
@@ -69,11 +79,20 @@ namespace Runic.FileFormats
                             return _name == null ? "" : _name;
                         }
                     }
+#if NET6_0_OR_GREATER
                     string? _name;
                     public string? Name { get { return _name; } }
+#else
+                    string _name;
+                    public string Name { get { return _name; } }
+#endif
                     Symbol[] _symbols;
                     public Symbol[] Symbols { get { return _symbols; } }
+#if NET6_0_OR_GREATER
                     public Library(string? name, Symbol[] symbols)
+#else
+                    public Library(string name, Symbol[] symbols)
+#endif
                     {
                         _name = name;
                         _symbols = symbols;
@@ -122,7 +141,11 @@ namespace Runic.FileFormats
                         {
                             uint rva = (uint)(import & 0x7FFFFFFF);
                             ushort hint = portableExecutable.ReadUInt16AtRelativeVirtualAddress(rva);
+#if NET6_0_OR_GREATER
                             string? name = portableExecutable.ReadUTF8StringAtRelativeVirtualAddress(rva + 2);
+#else
+                            string name = portableExecutable.ReadUTF8StringAtRelativeVirtualAddress(rva + 2);
+#endif
                             Library.SymbolByName symbolByName = new Library.SymbolByName(hint, name);
                             entries.Add(symbolByName);
                         }
@@ -217,7 +240,11 @@ namespace Runic.FileFormats
                 public static ImportTable Load(PortableExecutable portableExecutable)
                 {
                     ImportTable importTable = new ImportTable();
+#if NET6_0_OR_GREATER
                     Section? section = portableExecutable.FindSectionFromRelativeVirtualAddress(portableExecutable.ImportTable.RelativeVirtualAddress);
+#else
+                    Section section = portableExecutable.FindSectionFromRelativeVirtualAddress(portableExecutable.ImportTable.RelativeVirtualAddress);
+#endif
                     if (section == null) { return null; }
                     uint offset = portableExecutable.ImportTable.RelativeVirtualAddress - section.RelativeVirtualAddress;
                     importTable.LoadFromArray(portableExecutable.IsPE32Plus, portableExecutable.ImportTable.RelativeVirtualAddress, section.GetData(), offset, portableExecutable.ImportTable.Size, portableExecutable);

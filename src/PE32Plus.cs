@@ -68,7 +68,7 @@ namespace Runic.FileFormats
             _heapCommitSize = stream.ReadUInt64();
             stream.ReadUInt32(); // Reserved
         }
-
+#if NET6_0_OR_GREATER
         void ReadPE32PlusHeader(Span<byte> data, ref uint offset)
         {
             byte linkerMajor = data[(int)offset]; offset++;
@@ -106,6 +106,8 @@ namespace Runic.FileFormats
             _heapCommitSize = BitConverterLE.ToUInt64(data, offset); offset += 8;
             offset += 4; // Reserved
         }
+#endif
+
         ulong BaseOfCode
         {
             get

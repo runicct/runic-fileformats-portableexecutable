@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Runic.FileFormats.PortableExecutable</AssemblyName>
+    <RootNamespace>Runic.FileFormats.PortableExecutable</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\src\BitConverterLE.cs" Link="BitConverterLE.cs"/>
+    <Compile Include="..\..\src\CLIHeader.cs" Link="CLIHeader.cs"/>
+    <Compile Include="..\..\src\Coff.cs" Link="Coff.cs"/>
+    <Compile Include="..\..\src\Directories.cs" Link="Directories.cs"/>
+    <Compile Include="..\..\src\Directory.cs" Link="Directory.cs"/>
+    <Compile Include="..\..\src\DosHeader.cs" Link="DosHeader.cs"/>
+    <Compile Include="..\..\src\ExportTable.cs" Link="ExportTable.cs"/>
+    <Compile Include="..\..\src\ImportTable.cs" Link="ImportTable.cs"/>
+    <Compile Include="..\..\src\LexicographicCompare.cs" Link="LexicographicCompare.cs"/>
+    <Compile Include="..\..\src\PE32.cs" Link="PE32.cs"/>
+    <Compile Include="..\..\src\PE32Plus.cs" Link="PE32Plus.cs"/>
+    <Compile Include="..\..\src\PortableExecutable.cs" Link="PortableExecutable.cs"/>
+    <Compile Include="..\..\src\Section.cs" Link="Section.cs"/>
+    <Compile Include="..\..\src\SectionTable.cs" Link="SectionTable.cs"/>
+    <Compile Include="..\..\src\Timestamp.cs" Link="Timestamp.cs"/>
+  </ItemGroup>
+</Project>

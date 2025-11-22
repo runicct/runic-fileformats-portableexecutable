@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E5F87998-C483-4B7C-BBB7-4F7E2913D704}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Runic.FileFormats.PortableExecutable</RootNamespace>
+    <AssemblyName>Runic.FileFormats.PortableExecutable</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\src\BitConverterLE.cs">
+      <Link>BitConverterLE.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\CLIHeader.cs">
+      <Link>CLIHeader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Coff.cs">
+      <Link>Coff.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Directories.cs">
+      <Link>Directories.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Directory.cs">
+      <Link>Directory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\DosHeader.cs">
+      <Link>DosHeader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\ExportTable.cs">
+      <Link>ExportTable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\ImportTable.cs">
+      <Link>ImportTable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\LexicographicCompare.cs">
+      <Link>LexicographicCompare.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\PE32.cs">
+      <Link>PE32.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\PE32Plus.cs">
+      <Link>PE32Plus.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\PortableExecutable.cs">
+      <Link>PortableExecutable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Section.cs">
+      <Link>Section.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\SectionTable.cs">
+      <Link>SectionTable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Timestamp.cs">
+      <Link>Timestamp.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

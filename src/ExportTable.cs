@@ -35,11 +35,20 @@ namespace Runic.FileFormats
             {
                 public class Symbol
                 {
+#if NET6_0_OR_GREATER
                     string? _name;
                     public string? Name { get { return _name; } }
+#else
+                    string _name;
+                    public string Name { get { return _name; } }
+#endif
                     uint _address;
                     public uint Address { get { return _address; } }
+#if NET6_0_OR_GREATER
                     public Symbol(string? name, uint address)
+#else
+                    public Symbol(string name, uint address)
+#endif
                     {
                         _name = name;
                     }
@@ -88,12 +97,13 @@ namespace Runic.FileFormats
                     Span<byte> exportAddressTable = pe.GetSpanAtRelativeVirtualAddress(_exportAddressTableRVA, 4 * symbolCount);
                     Span<byte> exportOrdinalTable = pe.GetSpanAtRelativeVirtualAddress(_exportOrdinalTableRVA, 4 * namedSymbolCount);
                     Span<byte> exportNameTable = pe.GetSpanAtRelativeVirtualAddress(_exportNameTableRVA, 4 * namedSymbolCount);
-#else
-                    byte[]? exportAddressTable = pe.ReadArrayAtRelativeVirtualAddress(_exportAddressTableRVA, 4 * symbolCount);
-                    byte[]? exportOrdinalTable = pe.ReadArrayAtRelativeVirtualAddress(_exportOrdinalTableRVA, 4 * namedSymbolCount);
-                    byte[]? exportNameTable = pe.ReadArrayAtRelativeVirtualAddress(_exportNameTableRVA, 4 * namedSymbolCount);
-#endif
                     string?[] names = new string?[namedSymbolCount];
+#else
+                    byte[] exportAddressTable = pe.ReadArrayAtRelativeVirtualAddress(_exportAddressTableRVA, 4 * symbolCount);
+                    byte[] exportOrdinalTable = pe.ReadArrayAtRelativeVirtualAddress(_exportOrdinalTableRVA, 4 * namedSymbolCount);
+                    byte[] exportNameTable = pe.ReadArrayAtRelativeVirtualAddress(_exportNameTableRVA, 4 * namedSymbolCount);
+                    string[] names = new string[namedSymbolCount];
+#endif
                     _symbols = new Symbol[symbolCount];
                     for (int n = 0; n < symbolCount; n++)
                     {
@@ -168,19 +178,27 @@ namespace Runic.FileFormats
                     return exportTable;
                 }
 #endif
+#if NET6_0_OR_GREATER
                 public static ExportTable? Load(PortableExecutable portableExecutable, uint exportTableRelativeVirtualAddress)
+#else
+                public static ExportTable Load(PortableExecutable portableExecutable, uint exportTableRelativeVirtualAddress)
+#endif
                 {
 #if NET6_0_OR_GREATER
                     Span<byte> exportDirectoryTable = portableExecutable.GetSpanAtRelativeVirtualAddress(exportTableRelativeVirtualAddress, ExportDirectoryTableSize);
                     if (exportDirectoryTable.IsEmpty) { return null; }
 #else
-                    byte[]? exportDirectoryTable = portableExecutable.ReadArrayAtRelativeVirtualAddress(exportTableRelativeVirtualAddress, ExportDirectoryTableSize);
+                    byte[] exportDirectoryTable = portableExecutable.ReadArrayAtRelativeVirtualAddress(exportTableRelativeVirtualAddress, ExportDirectoryTableSize);
                     if (exportDirectoryTable == null) { return null; }
 #endif
                     return Load(exportDirectoryTable, 0, portableExecutable);
                 }
+#if NET6_0_OR_GREATER
 
                 public static ExportTable? Load(PortableExecutable portableExecutable)
+#else
+                public static ExportTable Load(PortableExecutable portableExecutable)
+#endif
                 {
                     if (portableExecutable.ExportTable.RelativeVirtualAddress == 0 || portableExecutable.ExportTable.Size == 0) { return null; }
                     return Load(portableExecutable, portableExecutable.ExportTable.RelativeVirtualAddress);

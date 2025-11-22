@@ -31,7 +31,7 @@ namespace Runic.FileFormats
     {
         internal static class BitConverterLE
         {
-
+#if NET6_0_OR_GREATER
             public static ulong ToUInt64(Span<byte> data, uint offset)
             {
                 return ((ulong)data[(int)offset]) +
@@ -55,6 +55,7 @@ namespace Runic.FileFormats
                 return (ushort)(((uint)data[(int)offset]) +
                                 (((uint)data[(int)offset + 1]) << 8));
             }
+#endif
             public static ulong ToUInt64(byte[] data, uint offset)
             {
                 return ((ulong)data[offset]) +
