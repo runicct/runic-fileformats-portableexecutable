@@ -108,60 +108,7 @@ namespace Runic.FileFormats
         }
 #endif
 
-        ulong BaseOfCode
-        {
-            get
-            {
-                ulong baseOfCode = ulong.MaxValue;
-                for (int n = 0; n < _sections.Length; n++)
-                {
-                    if ((_sections[n].Characteristics & Section.Flag.Code) != 0)
-                    {
-                        if (_sections[n].RelativeVirtualAddress < baseOfCode)
-                        {
-                            baseOfCode = _sections[n].RelativeVirtualAddress;
-                        }
-                    }
-                }
-                if (baseOfCode == ulong.MaxValue) { return 0; }
-                return baseOfCode;
-            }
-        }
-        ulong BaseOfData
-        {
-            get
-            {
-                ulong baseOfData = ulong.MaxValue;
-                for (int n = 0; n < _sections.Length; n++)
-                {
-                    if ((_sections[n].Characteristics & Section.Flag.InitializedData) != 0)
-                    {
-                        if (_sections[n].RelativeVirtualAddress < baseOfData)
-                        {
-                            baseOfData = _sections[n].RelativeVirtualAddress;
-                        }
-                    }
-                }
-                if (baseOfData == ulong.MaxValue) { return 0; }
-                return baseOfData;
-            }
-        }
-        uint SizeOfImage
-        {
-            get
-            {
-                uint totalSize = 0;
-                for (int n = 0; n < _sections.Length; n++)
-                {
-                    uint alignedSize = ((_sections[n].Size + _sectionAlignment - 1) / _sectionAlignment) * _sectionAlignment;
-                    totalSize += alignedSize;
-                }
-                uint alignedHeaderSize = ((SizeOfHeadersAligned + _sectionAlignment - 1) / _sectionAlignment) * _sectionAlignment;
-                totalSize += alignedHeaderSize;
 
-                return totalSize;
-            }
-        }
         void WritePE32PlusHeader(System.IO.BinaryWriter stream)
         {
             stream.Write((byte)_linkerVersion.Major);
@@ -169,21 +116,24 @@ namespace Runic.FileFormats
             uint totalTextSectionSize = 0;
             uint totalInitializedDataSize = 0;
             uint totalUninitializedDataSize = 0;
-            for (int n = 0; n < _sections.Length; n++)
+            if (_sections != null)
             {
-                uint paddedSectionSize = (uint)_sections[n].Size;
-                paddedSectionSize = ((paddedSectionSize + _fileAlignment - 1) / _fileAlignment) * _fileAlignment;
-                if ((_sections[n].Characteristics & Section.Flag.Code) != 0)
+                for (int n = 0; n < _sections.Length; n++)
                 {
-                    totalTextSectionSize += paddedSectionSize;
-                }
-                if ((_sections[n].Characteristics & Section.Flag.InitializedData) != 0)
-                {
-                    totalInitializedDataSize += paddedSectionSize;
-                }
-                if ((_sections[n].Characteristics & Section.Flag.UninitializedData) != 0)
-                {
-                    totalUninitializedDataSize += paddedSectionSize;
+                    uint paddedSectionSize = (uint)_sections[n].Size;
+                    paddedSectionSize = ((paddedSectionSize + _fileAlignment - 1) / _fileAlignment) * _fileAlignment;
+                    if ((_sections[n].Characteristics & Section.Flag.Code) != 0)
+                    {
+                        totalTextSectionSize += paddedSectionSize;
+                    }
+                    if ((_sections[n].Characteristics & Section.Flag.InitializedData) != 0)
+                    {
+                        totalInitializedDataSize += paddedSectionSize;
+                    }
+                    if ((_sections[n].Characteristics & Section.Flag.UninitializedData) != 0)
+                    {
+                        totalUninitializedDataSize += paddedSectionSize;
+                    }
                 }
             }
             stream.Write((uint)totalTextSectionSize);

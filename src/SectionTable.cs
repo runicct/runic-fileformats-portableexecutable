@@ -28,9 +28,9 @@ namespace Runic.FileFormats
 {
     public partial class PortableExecutable
     {
-        uint _sectionAlignment;
+        uint _sectionAlignment = 4096;
         public uint SectionAlignment { get { return _sectionAlignment; } set { _sectionAlignment = value; } }
-        uint _fileAlignment;
+        uint _fileAlignment = 512;
         public uint FileAlignment { get { return _fileAlignment; } set { _fileAlignment = value; } }
         public static uint SectionHeaderSize { get { return 40; } }
         public uint SectionTableSize { get { return (uint)(SectionHeaderSize * _sections.Length); } }

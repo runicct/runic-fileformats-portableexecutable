@@ -40,6 +40,60 @@ namespace Runic.FileFormats
         public Version SubsystemVersion { get { return _subsystemVersion; } set { _subsystemVersion = value; } }
         uint _checksum = 0;
         public uint Checksum { get { return _checksum; } set { _checksum = value; } }
+        ulong BaseOfCode
+        {
+            get
+            {
+                ulong baseOfCode = ulong.MaxValue;
+                for (int n = 0; n < _sections.Length; n++)
+                {
+                    if ((_sections[n].Characteristics & Section.Flag.Code) != 0)
+                    {
+                        if (_sections[n].RelativeVirtualAddress < baseOfCode)
+                        {
+                            baseOfCode = _sections[n].RelativeVirtualAddress;
+                        }
+                    }
+                }
+                if (baseOfCode == ulong.MaxValue) { return 0; }
+                return baseOfCode;
+            }
+        }
+        ulong BaseOfData
+        {
+            get
+            {
+                ulong baseOfData = ulong.MaxValue;
+                for (int n = 0; n < _sections.Length; n++)
+                {
+                    if ((_sections[n].Characteristics & Section.Flag.InitializedData) != 0)
+                    {
+                        if (_sections[n].RelativeVirtualAddress < baseOfData)
+                        {
+                            baseOfData = _sections[n].RelativeVirtualAddress;
+                        }
+                    }
+                }
+                if (baseOfData == ulong.MaxValue) { return 0; }
+                return baseOfData;
+            }
+        }
+        uint SizeOfImage
+        {
+            get
+            {
+                uint totalSize = 0;
+                for (int n = 0; n < _sections.Length; n++)
+                {
+                    uint alignedSize = ((_sections[n].Size + _sectionAlignment - 1) / _sectionAlignment) * _sectionAlignment;
+                    totalSize += alignedSize;
+                }
+                uint alignedHeaderSize = ((SizeOfHeadersAligned + _sectionAlignment - 1) / _sectionAlignment) * _sectionAlignment;
+                totalSize += alignedHeaderSize;
+
+                return totalSize;
+            }
+        }
         public enum ImageSubsystem
         {
             Unknown = 0,
@@ -79,7 +133,7 @@ namespace Runic.FileFormats
         public ulong HeapCommitSize { get { return _heapCommitSize; } set { _heapCommitSize = value; } }
         public static uint PE32PlusHeaderSize { get { return 240; } }
         public static uint PE32HeaderSize { get { return 224; } }
-        bool _isPE32Plus;
+        bool _isPE32Plus = true;
         public bool IsPE32Plus { get { return _isPE32Plus; } set { _isPE32Plus = value; } }
         uint _entryPointRelativeVirtualAddress = 0;
         public uint EntryPointRelativeVirtualAddress
@@ -221,6 +275,7 @@ namespace Runic.FileFormats
         {
             uint padding = SizeOfHeadersAligned - SizeOfHeaders;
             for (uint n = 0; n < padding; n++) { stream.Write((byte)0); }
+            if (_sections == null) { return; }
             for (int n = 0; n < _sections.Length; n++)
             {
 #if NET6_0_OR_GREATER
@@ -260,6 +315,7 @@ namespace Runic.FileFormats
         public Section FindSectionFromRelativeVirtualAddress(uint relativeVirtualAddress)
 #endif
         {
+            if (_sections == null) { return null; }
             for (int n = 0; n < _sections.Length; n++)
             {
                 uint sectionBase = _sections[n].RelativeVirtualAddress;

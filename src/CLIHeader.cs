@@ -45,7 +45,7 @@ namespace Runic.FileFormats
                     Preffers32Bit = 0x00020000
                 }
                 uint _metadataRootRVA;
-                public uint MetadataRootRVA
+                public uint MetadataRootRelativeVirtualAddress
                 {
                     get { return _metadataRootRVA; }
                     set { _metadataRootRVA = value; }
@@ -57,7 +57,7 @@ namespace Runic.FileFormats
                     set { _metadataSize = value; }
                 }
                 uint _resourcesRVA;
-                public uint ResourcesRVA
+                public uint ResourcesRelativeVirtualAddress
                 {
                     get { return _resourcesRVA; }
                     set { _resourcesRVA = value; }
@@ -69,7 +69,7 @@ namespace Runic.FileFormats
                     set { _resourcesSize = value; }
                 }
                 uint _strongNameSignatureRVA;
-                public uint StrongNameSignatureRVA
+                public uint StrongNameSignatureRelativeVirtualAddress
                 {
                     get { return _strongNameSignatureRVA; }
                     set { _strongNameSignatureRVA = value; }
@@ -81,7 +81,7 @@ namespace Runic.FileFormats
                     set { _strongNameSignatureSize = value; }
                 }
                 uint _VTableFixupsRVA;
-                public uint VTableFixupsRVA
+                public uint VTableFixupsRelativeVirtualAddress
                 {
                     get { return _VTableFixupsRVA; }
                     set { _VTableFixupsRVA = value; }
@@ -110,6 +110,7 @@ namespace Runic.FileFormats
                     get { return _runtimeVersion; }
                     set { _runtimeVersion = value; }
                 }
+                public static uint Size { get { return 72; } }
                 public void Save(System.IO.BinaryWriter binaryWriter)
                 {
                     binaryWriter.Write((int)72);
@@ -196,18 +197,18 @@ namespace Runic.FileFormats
                 }
 
 
-                public CLIHeader(Version runtimeVersion, uint metadataRootRVA, uint metadataSize, CorFlags flags, uint entrypoint, uint resourcesRVA, uint resourcesSize, uint strongNameSignatureRVA, uint strongNameSignatureSize, uint VTableFixupsRVA, uint VTableFixupsSize)
+                public CLIHeader(Version runtimeVersion, uint metadataRootRVA, uint metadataSize, CorFlags flags, uint entrypoint, uint resourcesRelativeVirtualAddress, uint resourcesSize, uint strongNameSignatureRelativeVirtualAddress, uint strongNameSignatureSize, uint VTableFixupsRelativeVirtualAddress, uint VTableFixupsSize)
                 {
                     _runtimeVersion = runtimeVersion;
                     _metadataRootRVA = metadataRootRVA;
                     _metadataSize = metadataSize;
                     _flags = flags;
                     _entryPoint = entrypoint;
-                    _resourcesRVA = resourcesRVA;
+                    _resourcesRVA = resourcesRelativeVirtualAddress;
                     _resourcesSize = resourcesSize;
-                    _strongNameSignatureRVA = strongNameSignatureRVA;
+                    _strongNameSignatureRVA = strongNameSignatureRelativeVirtualAddress;
                     _strongNameSignatureSize = strongNameSignatureSize;
-                    _VTableFixupsRVA = VTableFixupsRVA;
+                    _VTableFixupsRVA = VTableFixupsRelativeVirtualAddress;
                     _VTableFixupsSize = VTableFixupsSize;
                 }
             }
