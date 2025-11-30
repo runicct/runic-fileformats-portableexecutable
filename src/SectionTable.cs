@@ -82,7 +82,6 @@ namespace Runic.FileFormats
                     nameStr += (char)name[x];
                 }
                 uint sectionSize = stream.ReadUInt32();
-                uint allignedSize = ((sectionSize + _sectionAlignment - 1) / _sectionAlignment) * _sectionAlignment;
                 uint sectionRVA = stream.ReadUInt32();
                 uint sectionSizeOnDisk = stream.ReadUInt32();
                 uint sectionAddressOnDisk = stream.ReadUInt32();
@@ -92,7 +91,7 @@ namespace Runic.FileFormats
                 stream.ReadUInt16(); // NumberOfLinenumbers
 
                 uint characteristics = stream.ReadUInt32();
-                _sections[n] = new ImportedSection(nameStr, sectionRVA, allignedSize, sectionAddressOnDisk, sectionSizeOnDisk, (Section.Flag)characteristics);
+                _sections[n] = new ImportedSection(nameStr, sectionRVA, sectionSize, sectionAddressOnDisk, sectionSizeOnDisk, (Section.Flag)characteristics);
             }
         }
 #if NET6_0_OR_GREATER
@@ -115,7 +114,6 @@ namespace Runic.FileFormats
                     nameStr += (char)name[x];
                 }
                 uint sectionSize = BitConverterLE.ToUInt32(data, offset); offset += 4;
-                uint allignedSize = ((sectionSize + _sectionAlignment - 1) / _sectionAlignment) * _sectionAlignment;
                 uint sectionRVA = BitConverterLE.ToUInt32(data, offset); offset += 4;
                 uint sectionSizeOnDisk = BitConverterLE.ToUInt32(data, offset); offset += 4;
                 uint sectionAddressOnDisk = BitConverterLE.ToUInt32(data, offset); offset += 4;
@@ -125,7 +123,7 @@ namespace Runic.FileFormats
                 offset += 2; // NumberOfLinenumbers
 
                 uint characteristics = BitConverterLE.ToUInt32(data, offset); offset += 4;
-                _sections[n] = new ImportedSection(nameStr, sectionRVA, allignedSize, sectionAddressOnDisk, sectionSizeOnDisk, (Section.Flag)characteristics);
+                _sections[n] = new ImportedSection(nameStr, sectionRVA, sectionSize, sectionAddressOnDisk, sectionSizeOnDisk, (Section.Flag)characteristics);
             }
         }
 #endif
@@ -141,8 +139,7 @@ namespace Runic.FileFormats
                     for (; x < name.Length && x < 8; x++) { stream.Write(name[x]); }
                     for (; x < 8; x++) { stream.Write((byte)0); }
                 }
-                uint allignedSize = ((_sections[n].Size + _sectionAlignment - 1) / _sectionAlignment) * _sectionAlignment;
-                stream.Write((uint)allignedSize);
+                stream.Write((uint)_sections[n].Size);
                 stream.Write((uint)_sections[n].RelativeVirtualAddress);
 
 #if NET6_0_OR_GREATER

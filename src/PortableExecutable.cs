@@ -82,16 +82,19 @@ namespace Runic.FileFormats
         {
             get
             {
-                uint totalSize = 0;
+                uint end = 0;
                 for (int n = 0; n < _sections.Length; n++)
                 {
                     uint alignedSize = ((_sections[n].Size + _sectionAlignment - 1) / _sectionAlignment) * _sectionAlignment;
-                    totalSize += alignedSize;
+                    uint alignedEnd = _sections[n].RelativeVirtualAddress + alignedSize;
+                    if (alignedEnd > end)
+                    {
+                        end = alignedEnd;
+                    }
                 }
-                uint alignedHeaderSize = ((SizeOfHeadersAligned + _sectionAlignment - 1) / _sectionAlignment) * _sectionAlignment;
-                totalSize += alignedHeaderSize;
 
-                return totalSize;
+
+                return end;
             }
         }
         public enum ImageSubsystem
@@ -133,7 +136,7 @@ namespace Runic.FileFormats
         public ulong HeapCommitSize { get { return _heapCommitSize; } set { _heapCommitSize = value; } }
         public static uint PE32PlusHeaderSize { get { return 240; } }
         public static uint PE32HeaderSize { get { return 224; } }
-        bool _isPE32Plus = true;
+        bool _isPE32Plus = false;
         public bool IsPE32Plus { get { return _isPE32Plus; } set { _isPE32Plus = value; } }
         uint _entryPointRelativeVirtualAddress = 0;
         public uint EntryPointRelativeVirtualAddress
@@ -194,7 +197,7 @@ namespace Runic.FileFormats
             else { throw new Exception("Invalid PE File: Unknown magic number expected 0x20B (PE32+) or 0x10B (PE32)"); }
             DecodeDirectories(stream);
         }
-        public static void Load(System.IO.BinaryReader stream)
+        public static PortableExecutable Load(System.IO.BinaryReader stream)
         {
             DosHeader.ReadDOSHeader(stream);
             uint peCoffMagicNumber = stream.ReadUInt32();
@@ -206,6 +209,7 @@ namespace Runic.FileFormats
             portableExecutable.ReadPE32OrPE32PlusHeader(stream, optionalHeaderSize);
             portableExecutable.ReadSectionTable(stream);
             portableExecutable.ReadSectionData(stream);
+            return portableExecutable;
         }
 
 
@@ -243,7 +247,7 @@ namespace Runic.FileFormats
             else { throw new Exception("Invalid PE File"); }
             DecodeDirectories(data, ref offset);
         }
-        public static void Load(Span<byte> data, uint offset)
+        public static PortableExecutable Load(Span<byte> data, uint offset)
         {
             DosHeader.ReadDOSHeader(data, ref offset);
             uint peCoffMagicNumber = BitConverterLE.ToUInt32(data, offset); offset += 4;
@@ -255,6 +259,7 @@ namespace Runic.FileFormats
             portableExecutable.ReadPE32OrPE32PlusHeader(data, ref offset, optionalHeaderSize);
             portableExecutable.ReadSectionTable(data, ref offset);
             portableExecutable.ReadSectionData(data);
+            return portableExecutable;
         }
 #endif
         void WritePE32OrPE32PlusHeader(System.IO.BinaryWriter stream)

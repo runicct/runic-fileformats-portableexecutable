@@ -139,7 +139,7 @@ namespace Runic.FileFormats
             stream.Write((uint)totalUninitializedDataSize);
             stream.Write(_entryPointRelativeVirtualAddress);
             stream.Write((int)BaseOfCode); // BaseOfCode
-            stream.Write((int)BaseOfData); // BaseOfCode
+            stream.Write((int)BaseOfData); // BaseOfData
             stream.Write((uint)_imageBase);
             stream.Write(_sectionAlignment); // SectionAlignment
             stream.Write(_fileAlignment); // FileAlignment
